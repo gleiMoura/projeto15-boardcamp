@@ -2,7 +2,7 @@ import joi from "joi";
 import chalk from "chalk";
 import connectDB from "../database.js";
 
-export async function validateGame(req, res) {
+export async function validateGame(req, res, next) {
     try {
         const game = req.body;
         const gameSchema = joi.object({
@@ -24,11 +24,12 @@ export async function validateGame(req, res) {
             
         };
 
-        if (game.stockTotal < 0 || game.pricePerDay < 0 || !existCategoryId.rows[0]) return res.sendStatus(400);
+        if (game.stockTotal < 0 || game.pricePerDay < 0 || !existCategoryId.rows[0] || existName.rows[0]) return res.sendStatus(400);
 
         console.log(existName.rowCount) 
     } catch (error) {
         console.log(chalk.red("Something is wrong in the Server: " + error));
         res.sendStatus(500);
     }
+    next();
 }
